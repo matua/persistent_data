@@ -16,7 +16,9 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Category {
+  @HiveField(0)
   int get id => throw _privateConstructorUsedError;
+  @HiveField(1)
   String get name => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -29,7 +31,7 @@ abstract class $CategoryCopyWith<$Res> {
   factory $CategoryCopyWith(Category value, $Res Function(Category) then) =
       _$CategoryCopyWithImpl<$Res, Category>;
   @useResult
-  $Res call({int id, String name});
+  $Res call({@HiveField(0) int id, @HiveField(1) String name});
 }
 
 /// @nodoc
@@ -68,7 +70,7 @@ abstract class _$$_CategoryCopyWith<$Res> implements $CategoryCopyWith<$Res> {
       __$$_CategoryCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name});
+  $Res call({@HiveField(0) int id, @HiveField(1) String name});
 }
 
 /// @nodoc
@@ -100,12 +102,16 @@ class __$$_CategoryCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Category with DiagnosticableTreeMixin implements _Category {
-  const _$_Category({required this.id, required this.name});
+class _$_Category extends _Category with DiagnosticableTreeMixin {
+  _$_Category(
+      {@HiveField(0) required this.id, @HiveField(1) required this.name})
+      : super._();
 
   @override
+  @HiveField(0)
   final int id;
   @override
+  @HiveField(1)
   final String name;
 
   @override
@@ -141,13 +147,17 @@ class _$_Category with DiagnosticableTreeMixin implements _Category {
       __$$_CategoryCopyWithImpl<_$_Category>(this, _$identity);
 }
 
-abstract class _Category implements Category {
-  const factory _Category({required final int id, required final String name}) =
-      _$_Category;
+abstract class _Category extends Category {
+  factory _Category(
+      {@HiveField(0) required final int id,
+      @HiveField(1) required final String name}) = _$_Category;
+  _Category._() : super._();
 
   @override
+  @HiveField(0)
   int get id;
   @override
+  @HiveField(1)
   String get name;
   @override
   @JsonKey(ignore: true)

@@ -16,9 +16,13 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Record {
+  @HiveField(0)
   int get id => throw _privateConstructorUsedError;
+  @HiveField(1)
   Category get category => throw _privateConstructorUsedError;
+  @HiveField(2)
   String get name => throw _privateConstructorUsedError;
+  @HiveField(3)
   String get description => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,7 +34,11 @@ abstract class $RecordCopyWith<$Res> {
   factory $RecordCopyWith(Record value, $Res Function(Record) then) =
       _$RecordCopyWithImpl<$Res, Record>;
   @useResult
-  $Res call({int id, Category category, String name, String description});
+  $Res call(
+      {@HiveField(0) int id,
+      @HiveField(1) Category category,
+      @HiveField(2) String name,
+      @HiveField(3) String description});
 
   $CategoryCopyWith<$Res> get category;
 }
@@ -88,7 +96,11 @@ abstract class _$$_RecordCopyWith<$Res> implements $RecordCopyWith<$Res> {
       __$$_RecordCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, Category category, String name, String description});
+  $Res call(
+      {@HiveField(0) int id,
+      @HiveField(1) Category category,
+      @HiveField(2) String name,
+      @HiveField(3) String description});
 
   @override
   $CategoryCopyWith<$Res> get category;
@@ -132,20 +144,25 @@ class __$$_RecordCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Record implements _Record {
-  const _$_Record(
-      {required this.id,
-      required this.category,
-      required this.name,
-      required this.description});
+class _$_Record extends _Record {
+  _$_Record(
+      {@HiveField(0) required this.id,
+      @HiveField(1) required this.category,
+      @HiveField(2) required this.name,
+      @HiveField(3) required this.description})
+      : super._();
 
   @override
+  @HiveField(0)
   final int id;
   @override
+  @HiveField(1)
   final Category category;
   @override
+  @HiveField(2)
   final String name;
   @override
+  @HiveField(3)
   final String description;
 
   @override
@@ -176,20 +193,25 @@ class _$_Record implements _Record {
       __$$_RecordCopyWithImpl<_$_Record>(this, _$identity);
 }
 
-abstract class _Record implements Record {
-  const factory _Record(
-      {required final int id,
-      required final Category category,
-      required final String name,
-      required final String description}) = _$_Record;
+abstract class _Record extends Record {
+  factory _Record(
+      {@HiveField(0) required final int id,
+      @HiveField(1) required final Category category,
+      @HiveField(2) required final String name,
+      @HiveField(3) required final String description}) = _$_Record;
+  _Record._() : super._();
 
   @override
+  @HiveField(0)
   int get id;
   @override
+  @HiveField(1)
   Category get category;
   @override
+  @HiveField(2)
   String get name;
   @override
+  @HiveField(3)
   String get description;
   @override
   @JsonKey(ignore: true)
