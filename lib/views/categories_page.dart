@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:persistent_data/model/category.dart';
 import 'package:persistent_data/service/categories_state.dart';
 import 'package:provider/provider.dart';
 
-import '../model/category.dart';
+import 'records_page.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({Key? key}) : super(key: key);
@@ -12,11 +13,17 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
+  int _selectedCategoryIndex = -1;
+
   @override
   Widget build(BuildContext context) {
     List<Category> categories = context.watch<CategoriesState>().getCategories();
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Categories"),
+        centerTitle: true,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
@@ -58,9 +65,50 @@ class _CategoriesPageState extends State<CategoriesPage> {
       body: categories.isNotEmpty
           ? ListView.builder(
               itemCount: categories.length,
-              itemBuilder: (context, index) => ListTile(
-                    title: Text(categories[index].name),
-                  ))
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedCategoryIndex = index;
+                    });
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => RecordsPage(
+                          category: categories[index],
+                          categoryIndex: index,
+                        ),
+                      ),
+                    );
+                  },
+                  child: SizedBox(
+                    height: 80,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: index == _selectedCategoryIndex
+                            ? Colors.primaries[index % Colors.primaries.length].withOpacity(0.5)
+                            : Colors.primaries[index % Colors.primaries.length],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              categories[index].name,
+                              style: const TextStyle(
+                                fontSize: 30,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )
           : const Center(child: Text("No categories yet")),
     );
   }

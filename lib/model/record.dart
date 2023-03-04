@@ -18,4 +18,7 @@ class Record extends HiveObject with _$Record {
     @HiveField(2) required String name,
     @HiveField(3) required String description,
   }) = _Record;
+
+  @override
+  String toString() => '$name: $description)';
 }

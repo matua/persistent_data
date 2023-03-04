@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:persistent_data/model/category.dart';
 import 'package:persistent_data/repo/hive_initializer.dart';
 import 'package:persistent_data/service/records_state.dart';
 import 'package:persistent_data/views/categories_page.dart';
@@ -27,10 +25,27 @@ class MyApp extends StatelessWidget {
           create: (_) => CategoriesState(),
         ),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
+        theme: ThemeData(
+          primarySwatch: const MaterialColor(
+            0xFF000000,
+            <int, Color>{
+              50: Color(0xFF000000),
+              100: Color(0xFF000000),
+              200: Color(0xFF000000),
+              300: Color(0xFF000000),
+              400: Color(0xFF000000),
+              500: Color(0xFF000000),
+              600: Color(0xFF000000),
+              700: Color(0xFF000000),
+              800: Color(0xFF000000),
+              900: Color(0xFF000000),
+            },
+          ),
+        ),
         debugShowCheckedModeBanner: false,
         title: 'Hive Demo',
-        home: CategoriesPage(),
+        home: const CategoriesPage(),
       ),
     );
   }

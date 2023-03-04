@@ -166,11 +166,6 @@ class _$_Record extends _Record {
   final String description;
 
   @override
-  String toString() {
-    return 'Record(id: $id, category: $category, name: $name, description: $description)';
-  }
-
-  @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
