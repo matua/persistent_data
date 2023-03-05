@@ -13,6 +13,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Image Downloader"),
+        centerTitle: true,
       ),
     );
   }

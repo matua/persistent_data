@@ -18,7 +18,5 @@ class CategoriesState with ChangeNotifier {
     }
     _categoriesBox.put(category.id, category);
     notifyListeners();
-    print('After adding category:');
-    print(_categoriesBox.values.map((category) => category.name).toList());
   }
 }
