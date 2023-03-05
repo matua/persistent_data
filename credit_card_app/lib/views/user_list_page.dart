@@ -1,4 +1,5 @@
 import 'package:credit_card_app/service/user_state.dart';
+import 'package:credit_card_app/views/edit_user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:credit_card_app/model/user.dart';
 import 'package:provider/provider.dart';
@@ -78,8 +79,19 @@ class _UserListPageState extends State<UserListPage> {
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () async {
-                        context.read<UserState>().updateUser(user);
-                        await context.read<UserState>().getAllUsers();
+                        final userState = context.read<UserState>();
+                        final newUser = await Navigator.push<User>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditUserPage(user: user),
+                          ),
+                        );
+                        if (newUser != null) {
+                          userState.updateUser(newUser);
+                          setState(() {
+                            _usersFuture = userState.getAllUsers();
+                          });
+                        }
                       },
                     ),
                   ),
