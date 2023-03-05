@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final TextEditingController _controller = TextEditingController(text: "https://picsum.photos/200");
+  final TextEditingController _controller = TextEditingController(text: "https://picsum.photos/500");
   String lastEnteredUrl = '';
 
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -146,9 +146,16 @@ class _HomePageState extends State<HomePage> {
                                           final imageFile = images[index];
                                           return InkWell(
                                             onTap: () {
-                                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                                return ImageDetailPage(imageFile: imageFile);
-                                              }));
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => ImageDetailPage(
+                                                    initialIndex: images
+                                                        .indexWhere((imageFile) => imageFile.path == imageFile.path),
+                                                    imageFiles: images,
+                                                  ),
+                                                ),
+                                              );
                                             },
                                             child: Hero(
                                               tag: imageFile.path,
