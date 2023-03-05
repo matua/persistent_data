@@ -1,19 +1,30 @@
+import 'package:credit_card_app/repo/db_initializer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'views/cards_page.dart';
+import 'service/user_state.dart';
+import 'views/user_list_page.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final db = await DBInitializer.init();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserState(db),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Drift Package Demo',
-      home: CardsPage(),
+      title: 'Floor Package Demo',
+      home: UserListPage(),
     );
   }
 }
