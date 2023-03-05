@@ -19,6 +19,7 @@ class ImageDetailPage extends StatefulWidget {
 class _ImageDetailPageState extends State<ImageDetailPage> {
   late PageController _pageController;
   int _currentIndex = 0;
+  bool _showHint = true;
 
   @override
   void initState() {
@@ -60,23 +61,38 @@ class _ImageDetailPageState extends State<ImageDetailPage> {
             },
           ),
           Positioned(
-            bottom: 30.0,
-            left: 0.0,
-            right: 0.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int i = 0; i < widget.imageFiles.length; i++)
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                    width: 8.0,
-                    height: 8.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: i == _currentIndex ? Colors.black : Colors.grey,
-                    ),
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 500),
+              opacity: _showHint ? 1.0 : 0.0,
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                color: Colors.white.withOpacity(0.8),
+                child: const Text(
+                  'Swipe left or right to view more images',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black,
                   ),
-              ],
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 30.0,
+            left: 10.0,
+            right: 10.0,
+            child: Text(
+              '${_currentIndex + 1} / ${widget.imageFiles.length}',
+              style: const TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ],

@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final TextEditingController _controller = TextEditingController(text: "https://picsum.photos/500");
+  final TextEditingController _controller = TextEditingController(text: "https://picsum.photos/1000");
   String lastEnteredUrl = '';
 
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
