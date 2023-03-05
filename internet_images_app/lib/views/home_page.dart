@@ -7,11 +7,13 @@ import 'package:provider/provider.dart';
 import '../service/images_state.dart';
 import 'package:http/http.dart' as http;
 
+import 'image_detail_page.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -22,6 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> downloadImage(String url) async {
     final imagesState = context.read<ImagesState>();
+    final theme = Theme.of(context);
     if (url.isNotEmpty) {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -32,7 +35,7 @@ class _HomePageState extends State<HomePage> {
         _scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
           content: const Text('Error: Failed to download image'),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: theme.primaryColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
         ));
@@ -177,32 +180,11 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     imagesState.deleteAllImages();
                   },
-                  child: const Icon(Icons.delete),
                   backgroundColor: Colors.blue.shade400,
+                  child: const Icon(Icons.delete),
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ImageDetailPage extends StatelessWidget {
-  const ImageDetailPage({Key? key, required this.imageFile}) : super(key: key);
-
-  final File imageFile;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Hero(
-          tag: imageFile.path,
-          child: Image.file(
-            imageFile,
-            fit: BoxFit.cover,
           ),
         ),
       ),
