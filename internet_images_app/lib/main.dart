@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:internet_images_app/service/images_state.dart';
+import 'package:provider/provider.dart';
 
 import 'views/home_page.dart';
 
@@ -11,10 +13,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      home: HomePage(),
+    return ChangeNotifierProvider(
+      create: (context) => ImagesState(),
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        home: HomePage(),
+      ),
     );
   }
 }
