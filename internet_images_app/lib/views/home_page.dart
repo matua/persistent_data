@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../service/images_state.dart';
@@ -28,10 +29,22 @@ class _HomePageState extends State<HomePage> {
         imagesState.saveImage(imageBytes);
         _controller.text = url;
       } else {
-        _scaffoldMessengerKey.currentState?.showSnackBar(const SnackBar(
-          content: Text('Error: Failed to download image'),
+        _scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+          content: const Text('Error: Failed to download image'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
         ));
       }
+    } else {
+      _scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+        content: const Text('Error: Please enter a valid URL'),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Theme.of(context).primaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
+      ));
     }
   }
 
@@ -43,78 +56,154 @@ class _HomePageState extends State<HomePage> {
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Image Downloader"),
-          centerTitle: true,
-        ),
-        body: Column(
-          children: [
-            Row(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.blue.shade400,
+                Colors.blue.shade800,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Image Downloader',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 Expanded(
-                  child: Padding(
+                  child: Container(
                     padding: const EdgeInsets.all(16.0),
-                    child: TextField(
-                      controller: _controller,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter image URL',
-                      ),
-                      onChanged: (value) {
-                        lastEnteredUrl = value;
-                      },
-                      onSubmitted: (value) {
-                        downloadImage(value);
-                      },
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: TextField(
+                                  controller: _controller,
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter the URL of the image to download',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                  ),
+                                  onChanged: (value) {
+                                    lastEnteredUrl = value;
+                                  },
+                                  onSubmitted: (value) {
+                                    downloadImage(value);
+                                  },
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            IconButton(
+                              onPressed: () => downloadImage(_controller.text),
+                              icon: const Icon(Icons.download),
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: FutureBuilder(
+                            future: images,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final images = snapshot.data!;
+                                return images.isEmpty
+                                    ? const Center(
+                                        child: Text('No images'),
+                                      )
+                                    : GridView.builder(
+                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          crossAxisSpacing: 8.0,
+                                          mainAxisSpacing: 8.0,
+                                          childAspectRatio: 1.0,
+                                        ),
+                                        itemCount: images.length,
+                                        itemBuilder: (context, index) {
+                                          final imageFile = images[index];
+                                          return InkWell(
+                                            onTap: () {
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                                return ImageDetailPage(imageFile: imageFile);
+                                              }));
+                                            },
+                                            child: Hero(
+                                              tag: imageFile.path,
+                                              child: Image.file(
+                                                imageFile,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                  child: Text('Error: ${snapshot.error}'),
+                                );
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
-                IconButton(
-                  onPressed: () => downloadImage(_controller.text),
-                  icon: const Icon(Icons.download),
+                FloatingActionButton(
+                  onPressed: () {
+                    imagesState.deleteAllImages();
+                  },
+                  child: const Icon(Icons.delete),
+                  backgroundColor: Colors.blue.shade400,
                 ),
               ],
             ),
-            Expanded(
-              child: FutureBuilder(
-                future: images,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final images = snapshot.data!;
-                    return images.isEmpty
-                        ? const Center(
-                            child: Text('No images'),
-                          )
-                        : ListView.builder(
-                            key: ValueKey(images.length), // add a unique key
-                            itemCount: images.length,
-                            itemBuilder: (context, index) {
-                              final imageFile = images[index];
-                              return ListTile(
-                                leading: Image.file(imageFile),
-                                title: Text(imageFile.path),
-                              );
-                            },
-                          );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-            ),
-          ],
+          ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            imagesState.deleteAllImages();
-          },
-          child: const Icon(Icons.delete),
+      ),
+    );
+  }
+}
+
+class ImageDetailPage extends StatelessWidget {
+  const ImageDetailPage({Key? key, required this.imageFile}) : super(key: key);
+
+  final File imageFile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Hero(
+          tag: imageFile.path,
+          child: Image.file(
+            imageFile,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
