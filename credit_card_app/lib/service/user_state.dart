@@ -133,4 +133,9 @@ class UserState with ChangeNotifier {
   int? findUserId(SafeUser user) {
     return user.id;
   }
+
+  Future<bool> hasUsers() async {
+    final users = await db.userDao.getAllUsers();
+    return users.isNotEmpty;
+  }
 }

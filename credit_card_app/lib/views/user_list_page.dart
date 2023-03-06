@@ -16,41 +16,62 @@ class UserListPage extends StatefulWidget {
 }
 
 class _UserListPageState extends State<UserListPage> {
+  bool _canDeleteAllUsers = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkCanDeleteAllUsers();
+  }
+
+  Future<void> _checkCanDeleteAllUsers() async {
+    final userState = context.read<UserState>();
+    final hasUsers = await userState.hasUsers();
+    setState(() {
+      _canDeleteAllUsers = hasUsers;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final userState = context.read<UserState>();
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
           IconButton(
-            onPressed: () async {
-              final confirmed = await showDialog<bool>(
-                context: context,
-                builder: (BuildContext localContext) {
-                  return AlertDialog(
-                    title: const Text("Confirm"),
-                    content: const Text("Are you sure you wish to delete all users?"),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.of(localContext).pop(false),
-                        child: const Text("Cancel"),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.of(localContext).pop(true),
-                        child: const Text("Delete All"),
-                      ),
-                    ],
-                  );
-                },
-              );
-              if (confirmed == true) {
-                final userState = context.read<UserState>();
-                final allBankCards = await userState.getAllBankCards();
-                for (final bankCard in allBankCards) {
-                  userState.deleteBankCard(bankCard);
-                }
-                await userState.deleteAllUsers();
-              }
-            },
+            onPressed: _canDeleteAllUsers
+                ? () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext localContext) {
+                        return AlertDialog(
+                          title: const Text("Confirm"),
+                          content: const Text("Are you sure you wish to delete all users?"),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.of(localContext).pop(false),
+                              child: const Text("Cancel"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _checkCanDeleteAllUsers();
+                                Navigator.of(localContext).pop(true);
+                              },
+                              child: const Text("Delete All"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    if (confirmed == true) {
+                      final allBankCards = await userState.getAllBankCards();
+                      for (final bankCard in allBankCards) {
+                        userState.deleteBankCard(bankCard);
+                      }
+                      await userState.deleteAllUsers();
+                    }
+                  }
+                : null,
             icon: const Icon(Icons.delete),
           ),
         ],
@@ -69,78 +90,86 @@ class _UserListPageState extends State<UserListPage> {
               } else if (users.isEmpty) {
                 return const Center(child: Text('No users found'));
               } else {
-                return ListView.builder(
-                  itemCount: users.length,
-                  itemBuilder: (context, index) {
-                    final safeUser = users[index];
-                    return GestureDetector(
-                      onTap: () async {
-                        String bankCard = '';
-                        bankCard = await userState.getBankCardByUser(safeUser);
-                        _showDialog(context, safeUser, bankCard);
-                      },
-                      child: Dismissible(
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20.0),
-                          child: const Icon(
-                            Icons.delete,
-                            color: Colors.white,
-                          ),
-                        ),
-                        key: Key(safeUser.id.toString()),
-                        onDismissed: (direction) {
-                          context.read<UserState>().deleteUser(safeUser);
-                        },
-                        confirmDismiss: (direction) async {
-                          return await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text("Confirm"),
-                                content: const Text("Are you sure you wish to delete this user?"),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () => Navigator.of(context).pop(false),
-                                    child: const Text("Cancel"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.of(context).pop(true),
-                                    child: const Text("Delete"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(safeUser.image),
-                          ),
-                          title: Text('${safeUser.firstName} ${safeUser.lastName}'),
-                          subtitle: Text(safeUser.phoneNumber),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () async {
-                              final userState = context.read<UserState>();
-                              final updatedUser = await Navigator.push<User>(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditUserPage(safeUser: safeUser),
-                                ),
-                              );
-                              if (updatedUser != null) {
-                                print("check_update");
-                                userState.updateUser(UserConverter.convert(updatedUser), updatedUser.bankCardData);
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                    );
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await userState.getAllUsers();
                   },
+                  child: ListView.builder(
+                    itemCount: users.length,
+                    itemBuilder: (context, index) {
+                      final safeUser = users[index];
+                      return GestureDetector(
+                        onTap: () async {
+                          String bankCard = '';
+                          bankCard = await userState.getBankCardByUser(safeUser);
+                          _showDialog(context, safeUser, bankCard);
+                        },
+                        child: Dismissible(
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.only(right: 20.0),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          key: Key(safeUser.id.toString()),
+                          onDismissed: (direction) {
+                            context.read<UserState>().deleteUser(safeUser);
+                          },
+                          confirmDismiss: (direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Confirm"),
+                                  content: const Text("Are you sure you wish to delete this user?"),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: const Text("Cancel"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        _checkCanDeleteAllUsers();
+                                        Navigator.of(context).pop(true);
+                                      },
+                                      child: const Text("Delete"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(safeUser.image),
+                            ),
+                            title: Text('${safeUser.firstName} ${safeUser.lastName}'),
+                            subtitle: Text(safeUser.phoneNumber),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () async {
+                                final userState = context.read<UserState>();
+                                final updatedUser = await Navigator.push<User>(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditUserPage(safeUser: safeUser),
+                                  ),
+                                );
+                                if (updatedUser != null) {
+                                  print("check_update");
+                                  userState.updateUser(UserConverter.convert(updatedUser), updatedUser.bankCardData);
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 );
               }
             },
@@ -158,6 +187,7 @@ class _UserListPageState extends State<UserListPage> {
           );
           if (newUser != null) {
             userState.addUser(UserConverter.convert(newUser), newUser.bankCardData);
+            _checkCanDeleteAllUsers();
           }
         },
         child: const Icon(Icons.add),
