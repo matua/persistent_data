@@ -1,16 +1,22 @@
+import 'package:credit_card_app/model/dto/converter.dart';
 import 'package:flutter/material.dart';
-import 'package:credit_card_app/model/user.dart';
+import 'package:flutter/services.dart';
+
+import '../model/dto/safe_user.dart';
+import '../model/user.dart';
+import '../service/textfield_validators.dart';
 
 class EditUserPage extends StatefulWidget {
-  final User user;
+  final SafeUser safeUser;
 
-  const EditUserPage({Key? key, required this.user}) : super(key: key);
+  const EditUserPage({Key? key, required this.safeUser}) : super(key: key);
 
   @override
-  _EditUserPageState createState() => _EditUserPageState();
+  State<EditUserPage> createState() => _EditUserPageState();
 }
 
 class _EditUserPageState extends State<EditUserPage> {
+  final _formKey = GlobalKey<FormState>();
   late final TextEditingController _firstNameController;
   late final TextEditingController _lastNameController;
   late final TextEditingController _phoneNumberController;
@@ -18,13 +24,13 @@ class _EditUserPageState extends State<EditUserPage> {
   late final TextEditingController _bankCardDataController;
 
   @override
-  void initState() {
+  initState() {
     super.initState();
-    _firstNameController = TextEditingController(text: widget.user.firstName);
-    _lastNameController = TextEditingController(text: widget.user.lastName);
-    _phoneNumberController = TextEditingController(text: widget.user.phoneNumber);
-    _imageController = TextEditingController(text: widget.user.image);
-    _bankCardDataController = TextEditingController(text: widget.user.bankCardData);
+    _firstNameController = TextEditingController(text: widget.safeUser.firstName);
+    _lastNameController = TextEditingController(text: widget.safeUser.lastName);
+    _phoneNumberController = TextEditingController(text: widget.safeUser.phoneNumber);
+    _imageController = TextEditingController(text: widget.safeUser.image);
+    _bankCardDataController = TextEditingController();
   }
 
   @override
@@ -41,52 +47,86 @@ class _EditUserPageState extends State<EditUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit User'),
+        title: const Text('Edit User'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextFormField(
-              controller: _firstNameController,
-              decoration: InputDecoration(labelText: 'First Name'),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _firstNameController,
+                  decoration: const InputDecoration(labelText: 'First Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a first name';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _lastNameController,
+                  decoration: const InputDecoration(labelText: 'Last Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a last name';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _phoneNumberController,
+                  decoration: const InputDecoration(labelText: 'Phone Number'),
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Phone number is required';
+                    }
+                    if (value.length > 10) {
+                      return 'Phone number should not be more than 10 digits';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _imageController,
+                  decoration: const InputDecoration(labelText: 'Image URL'),
+                  validator: validateImageUrl,
+                ),
+                TextFormField(
+                  controller: _bankCardDataController,
+                  decoration: const InputDecoration(labelText: 'Bank Card Data'),
+                  keyboardType: TextInputType.number,
+                  validator: (cardNumber) => validateBankCard(cardNumber, true),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      final updatedSafeUser = widget.safeUser.copyWith(
+                        firstName: _firstNameController.text,
+                        lastName: _lastNameController.text,
+                        phoneNumber: _phoneNumberController.text,
+                        image: _imageController.text,
+                      );
+                      User updatedUser = UserConverter.safeUserAndCardNumberToUserConverter(
+                          updatedSafeUser, _bankCardDataController.text);
+                      Navigator.pop(context, updatedUser);
+                    }
+                  },
+                  child: const Text('Save Changes'),
+                ),
+              ],
             ),
-            TextFormField(
-              controller: _lastNameController,
-              decoration: InputDecoration(labelText: 'Last Name'),
-            ),
-            TextFormField(
-              controller: _phoneNumberController,
-              decoration: InputDecoration(labelText: 'Phone Number'),
-            ),
-            TextFormField(
-              controller: _imageController,
-              decoration: InputDecoration(labelText: 'Image URL'),
-            ),
-            TextFormField(
-              controller: _bankCardDataController,
-              decoration: InputDecoration(labelText: 'Bank Card Data'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                final updatedUser = widget.user.copyWith(
-                  firstName: _firstNameController.text,
-                  lastName: _lastNameController.text,
-                  phoneNumber: _phoneNumberController.text,
-                  image: _imageController.text,
-                  bankCardData: _bankCardDataController.text,
-                );
-                Navigator.pop(context, updatedUser);
-              },
-              child: Text('Save Changes'),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
-
-// End of EditUserPage code.

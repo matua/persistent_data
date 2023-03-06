@@ -2,32 +2,29 @@ import 'dart:async';
 import 'package:floor/floor.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
-import '../model/user.dart';
+import '../model/dto/safe_user.dart';
 
 part 'user_dao.g.dart';
 
-@Database(version: 1, entities: [User])
+@Database(version: 1, entities: [SafeUser])
 abstract class AppDatabase extends FloorDatabase {
-  UserDao get userDao;
+  SafeUserDao get userDao;
 }
 
 @dao
-abstract class UserDao {
-  @Query('SELECT * FROM users')
-  Future<List<User>> getAllUsers();
+abstract class SafeUserDao {
+  @Query('SELECT * FROM safe_users')
+  Future<List<SafeUser>> getAllUsers();
 
   @insert
-  Future<void> addUser(User user);
+  Future<void> addUser(SafeUser safeUser);
 
   @delete
-  Future<void> deleteUser(User user);
+  Future<void> deleteUser(SafeUser safeUser);
 
   @update
-  Future<void> updateUser(User user);
+  Future<void> updateUser(SafeUser safeUser);
 
-  @Query('SELECT * FROM users WHERE id = :id')
-  Future<User?> getUserById(int id);
-
-  @Query('SELECT * FROM users WHERE first_name = :firstName AND last_name = :lastName')
-  Future<User?> getUserByFullName(String firstName, String lastName);
+  @Query('DELETE FROM safe_users')
+  Future<void> deleteAllUsers();
 }

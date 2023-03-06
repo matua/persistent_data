@@ -1,0 +1,15 @@
+com.matuageorge.credit_card_app-jetified-window-java-1.0.0-beta04-0 /Users/matua/.gradle/caches/transforms-3/006d93cd422dbc43e89591147c2de572/transformed/jetified-window-java-1.0.0-beta04/res
+com.matuageorge.credit_card_app-core-1.6.0-1 /Users/matua/.gradle/caches/transforms-3/4ca28c4a71705f8a687c69dda140a277/transformed/core-1.6.0/res
+com.matuageorge.credit_card_app-jetified-security-crypto-1.1.0-alpha04-2 /Users/matua/.gradle/caches/transforms-3/721f6ff27a9d2d34046694447893c707/transformed/jetified-security-crypto-1.1.0-alpha04/res
+com.matuageorge.credit_card_app-jetified-annotation-experimental-1.1.0-3 /Users/matua/.gradle/caches/transforms-3/8965c941cf4bee4d72541b965c7c9d39/transformed/jetified-annotation-experimental-1.1.0/res
+com.matuageorge.credit_card_app-jetified-window-1.0.0-beta04-4 /Users/matua/.gradle/caches/transforms-3/dee59bb480020f42d53c2ea15e4501f7/transformed/jetified-window-1.0.0-beta04/res
+com.matuageorge.credit_card_app-debug-5 /Users/matua/flutter_projects/persistent_data/credit_card_app/android/app/src/debug/res
+com.matuageorge.credit_card_app-main-6 /Users/matua/flutter_projects/persistent_data/credit_card_app/android/app/src/main/res
+com.matuageorge.credit_card_app-pngs-7 /Users/matua/flutter_projects/persistent_data/credit_card_app/build/app/generated/res/pngs/debug
+com.matuageorge.credit_card_app-resValues-8 /Users/matua/flutter_projects/persistent_data/credit_card_app/build/app/generated/res/resValues/debug
+com.matuageorge.credit_card_app-rs-9 /Users/matua/flutter_projects/persistent_data/credit_card_app/build/app/generated/res/rs/debug
+com.matuageorge.credit_card_app-mergeDebugResources-10 /Users/matua/flutter_projects/persistent_data/credit_card_app/build/app/intermediates/incremental/debug/mergeDebugResources/merged.dir
+com.matuageorge.credit_card_app-mergeDebugResources-11 /Users/matua/flutter_projects/persistent_data/credit_card_app/build/app/intermediates/incremental/debug/mergeDebugResources/stripped.dir
+com.matuageorge.credit_card_app-merged_res-12 /Users/matua/flutter_projects/persistent_data/credit_card_app/build/app/intermediates/merged_res/debug
+com.matuageorge.credit_card_app-packaged_res-13 /Users/matua/flutter_projects/persistent_data/credit_card_app/build/flutter_secure_storage/intermediates/packaged_res/debug
+com.matuageorge.credit_card_app-packaged_res-14 /Users/matua/flutter_projects/persistent_data/credit_card_app/build/sqflite/intermediates/packaged_res/debug

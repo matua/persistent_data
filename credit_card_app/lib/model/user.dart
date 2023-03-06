@@ -1,8 +1,4 @@
-import 'package:floor/floor.dart';
-
-@Entity(tableName: 'users')
 class User {
-  @PrimaryKey(autoGenerate: true)
   final int? id;
 
   final String firstName;
@@ -45,5 +41,10 @@ class User {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       bankCardData: bankCardData ?? this.bankCardData,
     );
+  }
+
+  @override
+  String toString() {
+    return 'User{id: $id, firstName: $firstName, lastName: $lastName, age: $age, image: $image, phoneNumber: $phoneNumber, bankCardData: $bankCardData}';
   }
 }
