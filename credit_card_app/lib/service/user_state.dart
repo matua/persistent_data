@@ -61,8 +61,7 @@ class UserState with ChangeNotifier {
       image: user.image,
     );
     await db.userDao.updateUser(updatedUser);
-    print("UPDATING");
-    print(await db.userDao.getAllUsers());
+    print("User updated in database: $updatedUser");
     notifyListeners();
     return updatedUser;
   }

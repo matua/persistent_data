@@ -25,17 +25,17 @@ class _UserListPageState extends State<UserListPage> {
             onPressed: () async {
               final confirmed = await showDialog<bool>(
                 context: context,
-                builder: (BuildContext context) {
+                builder: (BuildContext localContext) {
                   return AlertDialog(
                     title: const Text("Confirm"),
                     content: const Text("Are you sure you wish to delete all users?"),
                     actions: <Widget>[
                       TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
+                        onPressed: () => Navigator.of(localContext).pop(false),
                         child: const Text("Cancel"),
                       ),
                       TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
+                        onPressed: () => Navigator.of(localContext).pop(true),
                         child: const Text("Delete All"),
                       ),
                     ],
@@ -76,41 +76,8 @@ class _UserListPageState extends State<UserListPage> {
                     return GestureDetector(
                       onTap: () async {
                         String bankCard = '';
-                        bankCard = await userState.getBankCardByUser(safeUser) ?? '';
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('User Details'),
-                              content: SingleChildScrollView(
-                                child: ListBody(
-                                  children: <Widget>[
-                                    Image.network(
-                                      safeUser.image,
-                                      width: 100.0,
-                                      height: 200.0,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    const SizedBox(height: 10.0),
-                                    Text('${safeUser.firstName} ${safeUser.lastName}'),
-                                    const SizedBox(height: 5.0),
-                                    Text(safeUser.phoneNumber),
-                                    const SizedBox(height: 5.0),
-                                    Text('Bank Card Number: $bankCard'),
-                                  ],
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('Close'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        bankCard = await userState.getBankCardByUser(safeUser);
+                        _showDialog(context, safeUser, bankCard);
                       },
                       child: Dismissible(
                         direction: DismissDirection.endToStart,
@@ -165,7 +132,8 @@ class _UserListPageState extends State<UserListPage> {
                                 ),
                               );
                               if (updatedUser != null) {
-                                userState.updateUser(safeUser, updatedUser.bankCardData);
+                                print("check_update");
+                                userState.updateUser(UserConverter.convert(updatedUser), updatedUser.bankCardData);
                               }
                             },
                           ),
@@ -195,5 +163,44 @@ class _UserListPageState extends State<UserListPage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void _showDialog(BuildContext context, SafeUser safeUser, String bankCard) {
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: const Text('User Details'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Image.network(
+                    safeUser.image,
+                    width: 100.0,
+                    height: 200.0,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(height: 10.0),
+                  Text('${safeUser.firstName} ${safeUser.lastName}'),
+                  const SizedBox(height: 5.0),
+                  Text(safeUser.phoneNumber),
+                  const SizedBox(height: 5.0),
+                  Text('Bank Card Number: $bankCard'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Close'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
